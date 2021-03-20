@@ -1,0 +1,35 @@
+{
+  "eye.splash_text": "小心你的背后！",
+
+  "eye.menu": "眼…",
+  "eye.title.main": "眼",
+  "eye.title.dan_mu": "弹幕",
+  "eye.done": "完成",
+  "eye.inform.change_live_room": "§l§b[系统]: 直播间切换至 %s。",
+  "eye.inform.dan_mu.open": "§l§b[系统]: 开启弹幕。",
+  "eye.inform.dan_mu.off": "§l§b[系统]: 关闭弹幕。",
+
+  "eye.widget.room_id": "B站直播房间号",
+
+  "eye.options.distance": "检测距离",
+  "eye.options.distance_s": "检测距离:%s",
+  "eye.options.warn_distance": "警报距离",
+  "eye.options.warn_distance_s": "警报距离:%s",
+
+  "eye.options.super_eye": "超级眼",
+  "eye.options.super_eye.open": "超级眼:开启",
+  "eye.options.super_eye.off": "超级眼:关闭",
+
+  "eye.options.black_belt": "电影黑带模式",
+  "eye.options.black_belt.open": "电影黑带模式:开启",
+  "eye.options.black_belt.off": "电影黑带模式:关闭",
+
+  "eye.options.dan_mu": "弹幕…",
+  "eye.options.dan_mu_option": "弹幕",
+  "eye.options.dan_mu.open": "弹幕:开启",
+  "eye.options.dan_mu.off": "弹幕:关闭",
+
+  "eye.options.tooltip.super_eye": "开启后启动夜视。",
+  "eye.options.tooltip.black_belt": "开启后显示电影黑带效果。",
+  "eye.options.tooltip.dan_mu_option": "开启后打开弹幕。"
+}
