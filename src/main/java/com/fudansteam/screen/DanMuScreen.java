@@ -2,16 +2,15 @@ package com.fudansteam.screen;
 
 import com.fudansteam.config.EyeConfig;
 import com.fudansteam.config.EyeDistributor;
+import com.fudansteam.danmu.utils.DanMuOperations;
+import com.fudansteam.options.EyeOptions;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
-import net.minecraft.client.settings.IteratableOption;
 import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.text.ChatType;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nonnull;
@@ -31,28 +30,12 @@ public class DanMuScreen extends Screen {
     private OptionsRowList list;
     private TextFieldWidget roomId;
     private String tmpRoomId;
-    
-    private static final ITextComponent DAN_MU_OPEN = new TranslationTextComponent("eye.options.dan_mu.open");
-    private static final ITextComponent DAN_MU_OFF = new TranslationTextComponent("eye.options.dan_mu.off");
-    
-    private final IteratableOption danMuOption = new IteratableOption("eye.options.dan_mu_option",
-            (gameOptions, integer) -> {
-                EyeConfig.danMu = !EyeConfig.danMu;
-                if (this.minecraft != null && this.minecraft.player != null) {
-                    this.minecraft.ingameGUI.sendChatMessage(ChatType.SYSTEM, EyeConfig.danMu ?
-                            new TranslationTextComponent("eye.inform.dan_mu.open") :
-                            new TranslationTextComponent("eye.inform.dan_mu.off"), this.minecraft.player.getUniqueID());
-                }
-                EyeDistributor.save();
-            },
-            (gameOptions, cyclingOption) -> {
-                cyclingOption.setOptionValues(this.font.trimStringToWidth(new TranslationTextComponent("eye.options.tooltip.dan_mu_option"), 200));
-                return EyeConfig.danMu ? DAN_MU_OPEN : DAN_MU_OFF;
-            });
+    public static DanMuScreen instance;
     
     public DanMuScreen(Screen parent) {
         super(new TranslationTextComponent("eye.title.dan_mu"));
         this.parent = parent;
+        instance = this;
     }
     
     @Override
@@ -78,7 +61,7 @@ public class DanMuScreen extends Screen {
         this.roomId.setResponder((value) -> this.tmpRoomId = value);
         this.roomId.setText(EyeConfig.roomId);
         this.children.add(this.roomId);
-        this.list.addOptions(new AbstractOption[]{danMuOption});
+        this.list.addOptions(new AbstractOption[]{EyeOptions.DAN_MU_OPTION, EyeOptions.BILI_OPTION, EyeOptions.DAN_MU_USAGE});
         this.children.add(this.list);
         this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, new TranslationTextComponent("eye.done"), (button) -> {
             if (this.minecraft != null) {
@@ -88,7 +71,8 @@ public class DanMuScreen extends Screen {
                 EyeConfig.roomId = this.tmpRoomId;
                 EyeDistributor.save();
                 if (this.minecraft != null && this.minecraft.player != null) {
-                    this.minecraft.ingameGUI.sendChatMessage(ChatType.SYSTEM, new TranslationTextComponent("eye.inform.change_live_room", tmpRoomId), this.minecraft.player.getUniqueID());
+                    DanMuOperations.close();
+                    DanMuOperations.open();
                 }
             }
         }));

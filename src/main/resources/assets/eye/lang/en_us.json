@@ -4,12 +4,26 @@
   "eye.menu": "Eye…",
   "eye.title.main": "Eye",
   "eye.title.dan_mu": "DanMu",
+  "eye.title.login": "Login Bilibili",
+  "eye.title.logout": "Confirm Logout",
+  "eye.title.logout.sub": "Will logout from Bilibili",
   "eye.done": "Done",
-  "eye.inform.change_live_room": "§l§b[System]: Live Room Changed to %s.",
-  "eye.inform.dan_mu.open": "§l§b[System]: Open DanMu.",
-  "eye.inform.dan_mu.off": "§l§b[System]: Close DanMu.",
+
+  "eye.inform.link_live_room.suc": "§l§bLive Room Linked to %s",
+  "eye.inform.link_live_room.fail": "§l§bFailed to Link %s",
+  "eye.inform.qr.tip": "Please scan the QR code with the mobile client of Bilibili",
+  "eye.inform.qr.error": "QR code error, please refresh and scan again",
+  "eye.inform.qr.expired": "QR code expired, please refresh and scan again",
+  "eye.inform.qr.not_scanned": "Please scan the QR code",
+  "eye.inform.qr.not_confirm": "Please confirm the scan page on your phone",
+  "eye.inform.qr.refreshed": "Qr code refreshed",
+  "eye.inform.qr.link": "Qr Link",
+  "eye.inform.qr.resource_code": "Source release page",
 
   "eye.widget.room_id": "Bilibili Broadcast RoomId",
+  "eye.widget.refresh": "Refresh QrImg",
+  "eye.widget.back": "Back",
+  "eye.widget.login": "Login",
 
   "eye.options.distance": "Eye Distance",
   "eye.options.distance_s": "Eye Distance: %s",
@@ -28,8 +42,20 @@
   "eye.options.dan_mu_option": "DanMu",
   "eye.options.dan_mu.open": "DanMu: OPEN",
   "eye.options.dan_mu.off": "DanMu: OFF",
+  "eye.options.dan_mu.usage": "How to send DanMu",
+
+  "eye.options.bili_option.login": "Login Bilibili…",
+  "eye.options.bili_option.logged": "Current User: %s",
 
   "eye.options.tooltip.super_eye": "After turning on night vision will be turned on.",
   "eye.options.tooltip.black_belt": "Show black belt effect after opening.",
-  "eye.options.tooltip.dan_mu_option": "Open the danMu after opening."
+  "eye.options.tooltip.dan_mu_option": "Open the danMu after opening.",
+  "eye.options.tooltip.bili_option": "Log in to Bilibili, and if you click it when you have logged in, you can logout.",
+  "eye.options.tooltip.dan_mu_usage": "Enter / eye sendBiliLive in the chat bar of the game interface, and then enter your own DanMu. Press enter to send successfully.",
+
+  "eye.widget.tooltip.login": "Warning: Although this module will not upload the login cookie to other places, it does not guarantee that the cookie in memory will be used by malware. If you are not sure, you can click the source release page above to view the source code.",
+
+  "eye.command.inform.login": "§cPlease login your Bilibili first",
+  "eye.command.inform.live_send.fail": "§4Message send failed",
+  "eye.command.inform.live_send.suc": "§aMessage sent successfully:%s"
 }
