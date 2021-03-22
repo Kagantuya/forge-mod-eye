@@ -3,9 +3,13 @@ package com.fudansteam.options;
 import com.fudansteam.Eye;
 import com.fudansteam.config.EyeConfig;
 import com.fudansteam.config.EyeDistributor;
+import com.fudansteam.danmu.utils.DanMuOperations;
 import com.fudansteam.screen.DanMuScreen;
+import com.fudansteam.screen.LoginScreen;
+import com.fudansteam.utils.BiliUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.settings.IteratableOption;
 import net.minecraft.client.settings.SliderPercentageOption;
 import net.minecraft.util.text.ITextComponent;
@@ -73,5 +77,57 @@ public class EyeOptions {
     public static final IteratableOption DAN_MU = new IteratableOption("eye.options.dan_mu",
             (gameOptions, integer) -> Minecraft.getInstance().displayGuiScreen(new DanMuScreen(Minecraft.getInstance().currentScreen)),
             (gameOptions, cyclingOption) -> new TranslationTextComponent("eye.options.dan_mu"));
+    
+    private static final ITextComponent DAN_MU_OPEN = new TranslationTextComponent("eye.options.dan_mu.open");
+    private static final ITextComponent DAN_MU_OFF = new TranslationTextComponent("eye.options.dan_mu.off");
+    
+    public static final IteratableOption DAN_MU_OPTION = new IteratableOption("eye.options.dan_mu_option",
+            (gameOptions, integer) -> {
+                EyeConfig.danMu = !EyeConfig.danMu;
+                if (Minecraft.getInstance().player != null) {
+                    if (EyeConfig.danMu) {
+                        DanMuOperations.open();
+                    } else {
+                        DanMuOperations.close();
+                    }
+                }
+                EyeDistributor.save();
+            },
+            (gameOptions, cyclingOption) -> {
+                cyclingOption.setOptionValues(Minecraft.getInstance().fontRenderer.trimStringToWidth(new TranslationTextComponent("eye.options.tooltip.dan_mu_option"), 200));
+                return EyeConfig.danMu ? DAN_MU_OPEN : DAN_MU_OFF;
+            });
+    
+    public static final IteratableOption BILI_OPTION = new IteratableOption("eye.options.bili_option.login",
+            (gameSettings, integer) -> {
+                Minecraft instance = Minecraft.getInstance();
+                if (Eye.loginCookies == null) {
+                    instance.displayGuiScreen(new LoginScreen(Minecraft.getInstance().currentScreen));
+                } else {
+                    instance.displayGuiScreen(new ConfirmScreen(
+                            (flag) -> {
+                                if (flag) {
+                                    BiliUtil.logout();
+                                }
+                                instance.displayGuiScreen(DanMuScreen.instance);
+                            },
+                            new TranslationTextComponent("eye.title.logout"), new TranslationTextComponent("eye.title.logout.sub")
+                    ));
+                }
+            },
+            (gameOptions, cyclingOption) -> {
+                cyclingOption.setOptionValues(Minecraft.getInstance().fontRenderer.trimStringToWidth(new TranslationTextComponent("eye.options.tooltip.bili_option"), 200));
+                return Eye.loginCookies == null ?
+                        new TranslationTextComponent("eye.options.bili_option.login") :
+                        new TranslationTextComponent("eye.options.bili_option.logged", Eye.username);
+            });
+    
+    public static final IteratableOption DAN_MU_USAGE = new IteratableOption("eye.options.dan_mu.usage",
+            (gameSettings, integer) -> {
+            },
+            (gameOptions, cyclingOption) -> {
+                cyclingOption.setOptionValues(Minecraft.getInstance().fontRenderer.trimStringToWidth(new TranslationTextComponent("eye.options.tooltip.dan_mu_usage"), 200));
+                return new TranslationTextComponent("eye.options.dan_mu.usage");
+            });
     
 }

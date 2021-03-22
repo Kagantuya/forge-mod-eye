@@ -2,19 +2,15 @@ package com.fudansteam.events;
 
 import com.fudansteam.Eye;
 import com.fudansteam.config.EyeConfig;
-import com.fudansteam.danmu.DanMuThread;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ChatType;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.awt.*;
-import java.util.Iterator;
 
 /**
  * @author : 箱子
@@ -27,7 +23,6 @@ public class HudEvents extends AbstractGui {
     private static final int PADDING = 14;
     private static final int BLACK_BELT_HEIGHT = 23;
     private static final int RGB = Color.BLACK.getRGB();
-    private Thread danMuThread = null;
     private static final int Z_INDEX = -100;
     
     @SubscribeEvent
@@ -37,30 +32,6 @@ public class HudEvents extends AbstractGui {
             this.setBlitOffset(Z_INDEX);
             fillGradient(e.getMatrixStack(), 0, 0, mainWindow.getScaledWidth(), BLACK_BELT_HEIGHT, RGB, RGB);
             fillGradient(e.getMatrixStack(), 0, mainWindow.getScaledHeight() - BLACK_BELT_HEIGHT, mainWindow.getScaledWidth(), mainWindow.getScaledHeight(), RGB, RGB);
-        }
-    }
-    
-    @SubscribeEvent
-    public void onDanMu(RenderGameOverlayEvent e) {
-        if (!EyeConfig.danMu) {
-            return;
-        }
-        Minecraft minecraft = Minecraft.getInstance();
-        if (!Eye.unload) {
-            if (e.getType() == RenderGameOverlayEvent.ElementType.CHAT && danMuThread == null) {
-                danMuThread = new Thread(new DanMuThread());
-                danMuThread.start();
-            } else if (danMuThread != null && minecraft.player != null && Eye.danMu.size() != 0) {
-                Iterator<String> iterator = Eye.danMu.iterator();
-                while (iterator.hasNext()) {
-                    minecraft.ingameGUI.sendChatMessage(ChatType.SYSTEM, new TranslationTextComponent(iterator.next()), minecraft.player.getUniqueID());
-                    iterator.remove();
-                }
-            }
-        } else {
-            danMuThread.interrupt();
-            danMuThread = null;
-            Eye.danMu.clear();
         }
     }
     

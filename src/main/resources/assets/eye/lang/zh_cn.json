@@ -4,12 +4,26 @@
   "eye.menu": "眼…",
   "eye.title.main": "眼",
   "eye.title.dan_mu": "弹幕",
+  "eye.title.login": "登录B站",
+  "eye.title.logout": "确认登出",
+  "eye.title.logout.sub": "将从B站登出",
   "eye.done": "完成",
-  "eye.inform.change_live_room": "§l§b[系统]: 直播间切换至 %s。",
-  "eye.inform.dan_mu.open": "§l§b[系统]: 开启弹幕。",
-  "eye.inform.dan_mu.off": "§l§b[系统]: 关闭弹幕。",
+
+  "eye.inform.link_live_room.suc": "§l§b直播间连接至%s",
+  "eye.inform.link_live_room.fail": "§l§b直播间%s连接失败",
+  "eye.inform.qr.tip": "请用B站手机客户端扫描二维码",
+  "eye.inform.qr.error": "二维码错误，请刷新后重新扫描",
+  "eye.inform.qr.expired": "二维码已过期，请刷新后重新扫描",
+  "eye.inform.qr.not_scanned": "请扫描二维码",
+  "eye.inform.qr.not_confirm": "请于手机上确认扫描页面",
+  "eye.inform.qr.refreshed": "二维码已刷新",
+  "eye.inform.qr.link": "二维码链接",
+  "eye.inform.qr.resource_code": "源码发布页",
 
   "eye.widget.room_id": "B站直播房间号",
+  "eye.widget.refresh": "刷新二维码",
+  "eye.widget.back": "返回",
+  "eye.widget.login": "登录",
 
   "eye.options.distance": "检测距离",
   "eye.options.distance_s": "检测距离:%s",
@@ -28,8 +42,20 @@
   "eye.options.dan_mu_option": "弹幕",
   "eye.options.dan_mu.open": "弹幕:开启",
   "eye.options.dan_mu.off": "弹幕:关闭",
+  "eye.options.dan_mu.usage": "如何发送弹幕",
+
+  "eye.options.bili_option.login": "登录B站…",
+  "eye.options.bili_option.logged": "当前用户:%s",
 
   "eye.options.tooltip.super_eye": "开启后启动夜视。",
   "eye.options.tooltip.black_belt": "开启后显示电影黑带效果。",
-  "eye.options.tooltip.dan_mu_option": "开启后打开弹幕。"
+  "eye.options.tooltip.dan_mu_option": "开启后打开弹幕。",
+  "eye.options.tooltip.bili_option": "登录B站，若已登录时点击则登出。",
+  "eye.options.tooltip.dan_mu_usage": "在游戏界面的聊天栏输入/eye sendBiliLive后输入自己的弹幕，回车后即可发送成功。",
+
+  "eye.widget.tooltip.login": "警告:虽然此模组不会将登录Cookie上传至其余地方，但不保证内存中的Cookie被恶意软件使用，若不放心此条保证可点击上方源码发布页查看源码。",
+
+  "eye.command.inform.login": "§c请先登录B站",
+  "eye.command.inform.live_send.fail": "§4弹幕发送失败",
+  "eye.command.inform.live_send.suc": "§a弹幕发送成功:%s"
 }
