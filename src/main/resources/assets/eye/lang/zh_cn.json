@@ -47,11 +47,22 @@
   "eye.options.bili_option.login": "登录B站…",
   "eye.options.bili_option.logged": "当前用户:%s",
 
+  "eye.options.dan_mu_layer": "弹幕层数",
+  "eye.options.dan_mu_layer_l": "弹幕层数: %s",
+
+  "eye.options.dan_mu_scroll": "滚动弹幕",
+  "eye.options.dan_mu_scroll.open": "滚动弹幕:开启",
+  "eye.options.dan_mu_scroll.off": "滚动弹幕:关闭",
+
+  "eye.options.dan_mu_row_spacing": "行间距",
+  "eye.options.dan_mu_row_spacing_s": "行间距: %s",
+
   "eye.options.tooltip.super_eye": "开启后启动夜视。",
   "eye.options.tooltip.black_belt": "开启后显示电影黑带效果。",
   "eye.options.tooltip.dan_mu_option": "开启后打开弹幕。",
   "eye.options.tooltip.bili_option": "登录B站，若已登录时点击则登出。",
   "eye.options.tooltip.dan_mu_usage": "在游戏界面的聊天栏输入/eye sendBiliLive后输入自己的弹幕，回车后即可发送成功。",
+  "eye.options.tooltip.dan_mu_scroll": "开启后显示滚动弹幕。",
 
   "eye.widget.tooltip.login": "警告:虽然此模组不会将登录Cookie上传至其余地方，但不保证内存中的Cookie被恶意软件使用，若不放心此条保证可点击上方源码发布页查看源码。",
 

@@ -47,11 +47,22 @@
   "eye.options.bili_option.login": "Login Bilibili…",
   "eye.options.bili_option.logged": "Current User: %s",
 
+  "eye.options.dan_mu_layer": "DanMu Layer",
+  "eye.options.dan_mu_layer_l": "DanMu Layer: %s",
+
+  "eye.options.dan_mu_scroll": "DanMu Layer",
+  "eye.options.dan_mu_scroll.open": "DanMu Scroll: OPEN",
+  "eye.options.dan_mu_scroll.off": "DanMu Scroll: OFF",
+
+  "eye.options.dan_mu_row_spacing": "Row Spacing",
+  "eye.options.dan_mu_row_spacing_s": "Row Spacing: %s",
+
   "eye.options.tooltip.super_eye": "After turning on night vision will be turned on.",
   "eye.options.tooltip.black_belt": "Show black belt effect after opening.",
   "eye.options.tooltip.dan_mu_option": "Open the danMu after opening.",
   "eye.options.tooltip.bili_option": "Log in to Bilibili, and if you click it when you have logged in, you can logout.",
   "eye.options.tooltip.dan_mu_usage": "Enter / eye sendBiliLive in the chat bar of the game interface, and then enter your own DanMu. Press enter to send successfully.",
+  "eye.options.tooltip.dan_mu_scroll": "Scrolling DanMu is displayed after opening.",
 
   "eye.widget.tooltip.login": "Warning: Although this module will not upload the login cookie to other places, it does not guarantee that the cookie in memory will be used by malware. If you are not sure, you can click the source release page above to view the source code.",
 

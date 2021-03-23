@@ -21,7 +21,7 @@ import java.awt.*;
 public class HudEvents extends AbstractGui {
     
     private static final int PADDING = 14;
-    private static final int BLACK_BELT_HEIGHT = 23;
+    public static final int BLACK_BELT_HEIGHT = 23;
     private static final int RGB = Color.BLACK.getRGB();
     private static final int Z_INDEX = -100;
     

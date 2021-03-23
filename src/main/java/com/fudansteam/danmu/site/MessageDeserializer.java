@@ -1,6 +1,6 @@
 package com.fudansteam.danmu.site;
 
-import com.fudansteam.danmu.Config;
+import com.fudansteam.danmu.config.Config;
 import com.google.gson.*;
 import org.apache.commons.lang3.StringUtils;
 

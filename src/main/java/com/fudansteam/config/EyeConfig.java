@@ -18,5 +18,8 @@ public class EyeConfig {
     public static boolean blackBelt = false;
     public static String roomId = "";
     public static boolean danMu = false;
+    public static int danMuLayer = 10;
+    public static boolean danMuScroll = false;
+    public static int danMuRowSpacing = 3;
     
 }

@@ -1,7 +1,7 @@
 package com.fudansteam.danmu.site;
 
 import com.fudansteam.config.EyeConfig;
-import com.fudansteam.danmu.Config;
+import com.fudansteam.danmu.config.Config;
 import com.fudansteam.danmu.event.SendDanMuEvent;
 import com.fudansteam.danmu.utils.MessageCompiler;
 import com.fudansteam.danmu.utils.Zlib;

@@ -33,8 +33,8 @@ public class EyeOptions {
     public static final SliderPercentageOption EYE_DISTANCE = new SliderPercentageOption("eye.options.distance",
             1.0D, 50.0D, 1.0F,
             gameOptions -> (double) EyeConfig.distance,
-            (gameOptions, distance) -> {
-                EyeConfig.distance = distance.intValue();
+            (gameOptions, value) -> {
+                EyeConfig.distance = value.intValue();
                 EyeDistributor.save();
             },
             (gameOptions, option) -> new TranslationTextComponent("eye.options.distance_s", EyeConfig.distance));
@@ -42,8 +42,8 @@ public class EyeOptions {
     public static final SliderPercentageOption WARN_DISTANCE = new SliderPercentageOption("eye.options.warn_distance",
             1.0D, 50.0D, 1.0F,
             gameOptions -> (double) EyeConfig.warnDistance,
-            (gameOptions, warnDistance) -> {
-                EyeConfig.warnDistance = warnDistance.intValue();
+            (gameOptions, value) -> {
+                EyeConfig.warnDistance = value.intValue();
                 EyeDistributor.save();
             },
             (gameOptions, option) -> new TranslationTextComponent("eye.options.warn_distance_s", EyeConfig.warnDistance));
@@ -129,5 +129,36 @@ public class EyeOptions {
                 cyclingOption.setOptionValues(Minecraft.getInstance().fontRenderer.trimStringToWidth(new TranslationTextComponent("eye.options.tooltip.dan_mu_usage"), 200));
                 return new TranslationTextComponent("eye.options.dan_mu.usage");
             });
+    
+    public static final SliderPercentageOption DAN_MU_LAYER = new SliderPercentageOption("eye.options.dan_mu_layer",
+            1.0D, 10.0D, 1.0F,
+            gameOptions -> (double) EyeConfig.danMuLayer,
+            (gameOptions, value) -> {
+                EyeConfig.danMuLayer = value.intValue();
+                EyeDistributor.save();
+            },
+            (gameOptions, option) -> new TranslationTextComponent("eye.options.dan_mu_layer_l", EyeConfig.danMuLayer));
+    
+    private static final TranslationTextComponent DAN_MU_SCROLL_OPEN = new TranslationTextComponent("eye.options.dan_mu_scroll.open");
+    private static final TranslationTextComponent DAN_MU_SCROLL_OFF = new TranslationTextComponent("eye.options.dan_mu_scroll.off");
+    
+    public static final IteratableOption DAN_MU_SCROLL = new IteratableOption("eye.options.dan_mu_scroll",
+            (gameOptions, integer) -> {
+                EyeConfig.danMuScroll = !EyeConfig.danMuScroll;
+                EyeDistributor.save();
+            },
+            (gameOptions, cyclingOption) -> {
+                cyclingOption.setOptionValues(Minecraft.getInstance().fontRenderer.trimStringToWidth(new TranslationTextComponent("eye.options.tooltip.dan_mu_scroll"), 200));
+                return EyeConfig.danMuScroll ? DAN_MU_SCROLL_OPEN : DAN_MU_SCROLL_OFF;
+            });
+    
+    public static final SliderPercentageOption DAN_MU_ROW_SPACING = new SliderPercentageOption("eye.options.dan_mu_row_spacing",
+            1.0D, 5.0D, 1.0F,
+            gameOptions -> (double) EyeConfig.danMuRowSpacing,
+            (gameOptions, value) -> {
+                EyeConfig.danMuRowSpacing = value.intValue();
+                EyeDistributor.save();
+            },
+            (gameOptions, option) -> new TranslationTextComponent("eye.options.dan_mu_row_spacing_s", EyeConfig.danMuRowSpacing));
     
 }
