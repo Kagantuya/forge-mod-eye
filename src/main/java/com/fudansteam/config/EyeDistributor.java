@@ -69,6 +69,9 @@ public class EyeDistributor {
         EyeConfig.blackBelt = Boolean.parseBoolean(splits[4].split("=")[1]);
         EyeConfig.danMu = Boolean.parseBoolean(splits[5].split("=")[1]);
         EyeConfig.roomId = splits[6].split("=")[1];
+        EyeConfig.danMuLayer = Integer.parseInt(splits[7].split("=")[1]);
+        EyeConfig.danMuScroll = Boolean.parseBoolean(splits[8].split("=")[1]);
+        EyeConfig.danMuRowSpacing = Integer.parseInt(splits[9].split("=")[1]);
     }
     
     private static String getConfig() {
@@ -78,7 +81,10 @@ public class EyeDistributor {
                 "originGamma=" + Eye.originGamma + "\n" +
                 "blackBelt=" + EyeConfig.blackBelt + "\n" +
                 "danMu=" + EyeConfig.danMu + "\n" +
-                "roomId=" + EyeConfig.roomId + "\n";
+                "roomId=" + EyeConfig.roomId + "\n" +
+                "danMuLayer=" + EyeConfig.danMuLayer + "\n" +
+                "danMuScroll=" + EyeConfig.danMuScroll + "\n" +
+                "danMuRowSpacing=" + EyeConfig.danMuRowSpacing + "\n";
     }
     
 }

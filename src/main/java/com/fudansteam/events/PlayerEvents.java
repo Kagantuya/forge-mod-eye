@@ -2,34 +2,53 @@ package com.fudansteam.events;
 
 import com.fudansteam.Eye;
 import com.fudansteam.config.EyeConfig;
+import com.fudansteam.danmu.entity.DanMu;
+import com.fudansteam.danmu.event.SendDanMuEvent;
+import com.fudansteam.danmu.utils.DanMuOperations;
+import com.fudansteam.thread.DanMuRenderThread;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.monster.SlimeEntity;
 import net.minecraft.entity.passive.AmbientEntity;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * @author : 箱子
  * Description : description
- * Created by 箱子 on 2021-03-16 20:33:40
+ * Created by 箱子 on 2021-03-16 22:59:03
  * Copyright 2021 HDU_IES. All rights reserved.
  */
-public class EntityEvents {
+public class PlayerEvents {
     
+    private static boolean entered = false;
     private final Map<String, Integer> preClosestEntityIdMap = new HashMap<>();
+    private static Thread danMuThread = null;
+    public static Queue<DanMu> danMuQueue = new ConcurrentLinkedQueue<>();
+    
+    @SubscribeEvent
+    public void onEnterWorld(PlayerEvent.PlayerLoggedInEvent event) {
+        entered = true;
+        if (EyeConfig.danMu) {
+            DanMuOperations.open();
+        }
+    }
     
     @SubscribeEvent
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent e) {
-        if (Eye.unload) {
-            clear();
-        } else {
+        if (entered) {
             Entity entity = e.getEntity();
             ClientPlayerEntity player = Minecraft.getInstance().player;
             if (player == null || ((int) entity.getDistance(player)) == 0) {
@@ -44,14 +63,43 @@ public class EntityEvents {
         }
     }
     
-    /**
-     * 清理缓存
-     */
-    private void clear() {
+    @SubscribeEvent
+    public void onOutWorld(PlayerEvent.PlayerLoggedOutEvent event) {
+        entered = false;
+        if (danMuThread != null) {
+            danMuThread.interrupt();
+            danMuThread = null;
+        }
+        DanMuOperations.close();
         Eye.tips.clear();
         Eye.tipTimes.clear();
-        preClosestEntityIdMap.clear();
         Eye.shouldWarn = false;
+        preClosestEntityIdMap.clear();
+        
+        danMuQueue.clear();
+        SendDanMuEvent.TEXT_CACHE.clear();
+        DanMuRenderThread.danMuQueue.clear();
+    }
+    
+    @SubscribeEvent
+    public void onDanMuRender(RenderGameOverlayEvent e) {
+        if (e.getType() == RenderGameOverlayEvent.ElementType.ALL && EyeConfig.danMuScroll) {
+            if (danMuThread == null && entered) {
+                danMuThread = new DanMuRenderThread();
+                danMuThread.start();
+            }
+            FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
+            for (DanMu danMu : danMuQueue) {
+                int y = (danMu.getLayer() - 1) * (fontRenderer.FONT_HEIGHT + EyeConfig.danMuRowSpacing) + EyeConfig.danMuRowSpacing;
+                if (EyeConfig.blackBelt) {
+                    y += HudEvents.BLACK_BELT_HEIGHT;
+                }
+                fontRenderer.drawStringWithShadow(
+                        e.getMatrixStack(), danMu.getText(),
+                        danMu.getX(), y,
+                        Color.WHITE.getRGB());
+            }
+        }
     }
     
     /**

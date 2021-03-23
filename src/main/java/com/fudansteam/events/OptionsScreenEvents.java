@@ -8,6 +8,7 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 /**
  * @author : 箱子
@@ -15,10 +16,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  * Created by 箱子 on 2021-03-16 22:44:59
  * Copyright 2021 HDU_IES. All rights reserved.
  */
+@Mod.EventBusSubscriber
 public class OptionsScreenEvents {
     
     @SubscribeEvent
-    public void onInit(GuiScreenEvent.InitGuiEvent e) {
+    public static void onInit(GuiScreenEvent.InitGuiEvent e) {
         if (e.getGui() instanceof OptionsScreen) {
             Minecraft minecraft = Minecraft.getInstance();
             MainWindow mainWindow = minecraft.getMainWindow();

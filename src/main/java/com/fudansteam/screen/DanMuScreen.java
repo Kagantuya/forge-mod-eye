@@ -61,7 +61,7 @@ public class DanMuScreen extends Screen {
         this.roomId.setResponder((value) -> this.tmpRoomId = value);
         this.roomId.setText(EyeConfig.roomId);
         this.children.add(this.roomId);
-        this.list.addOptions(new AbstractOption[]{EyeOptions.DAN_MU_OPTION, EyeOptions.BILI_OPTION, EyeOptions.DAN_MU_USAGE});
+        this.list.addOptions(new AbstractOption[]{EyeOptions.DAN_MU_OPTION, EyeOptions.DAN_MU_SCROLL, EyeOptions.DAN_MU_LAYER, EyeOptions.DAN_MU_ROW_SPACING, EyeOptions.BILI_OPTION, EyeOptions.DAN_MU_USAGE});
         this.children.add(this.list);
         this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, new TranslationTextComponent("eye.done"), (button) -> {
             if (this.minecraft != null) {
