@@ -1,9 +1,9 @@
 package com.fudansteam.danmu.event;
 
+import com.fudansteam.Eye;
 import com.fudansteam.config.EyeConfig;
 import com.fudansteam.danmu.entity.DanMu;
-import com.fudansteam.events.PlayerEvents;
-import com.fudansteam.thread.DanMuRenderThread;
+import com.fudansteam.thread.ScrollDanMuThread;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
@@ -34,7 +34,8 @@ public class SendDanMuEvent extends Event {
     public static void onSendDanMu(SendDanMuEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
         ClientPlayerEntity player = minecraft.player;
-        if (player != null) {
+        // 防止游戏内 hud 未就绪导致弹幕堆积重叠
+        if (EyeConfig.danMuScroll && Eye.entered) {
             // 先进缓存
             TEXT_CACHE.add(event.getMessage());
             DanMu danMu = new DanMu();
@@ -44,9 +45,11 @@ public class SendDanMuEvent extends Event {
             if (layer != -1) {
                 danMu.setLayer(layer);
                 // 给线程提供数据并出队
-                DanMuRenderThread.danMuQueue.add(danMu);
+                ScrollDanMuThread.danMuQueue.add(danMu);
                 TEXT_CACHE.poll();
             }
+        }
+        if (player != null) {
             player.sendMessage(new StringTextComponent(event.getMessage()), player.getUniqueID());
         }
     }
@@ -56,7 +59,7 @@ public class SendDanMuEvent extends Event {
         int finalLayer = 1;
         Map<Integer, DanMu> latestDanMus = new HashMap<>();
         // 按层分割现有弹幕，获取每层最后出现的弹幕
-        for (DanMu danMu : PlayerEvents.danMuQueue) {
+        for (DanMu danMu : ScrollDanMuThread.danMuQueue) {
             int currentLayer = danMu.getLayer();
             DanMu latestDanMu = latestDanMus.get(currentLayer);
             if (latestDanMu == null) {

@@ -1,7 +1,7 @@
 package com.fudansteam.thread;
 
 import com.fudansteam.danmu.entity.DanMu;
-import com.fudansteam.events.PlayerEvents;
+import com.fudansteam.events.HudEvents;
 import net.minecraft.client.Minecraft;
 
 import java.util.Queue;
@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Created by 箱子 on 2021-03-23 11:04:49
  * Copyright 2021 HDU_IES. All rights reserved.
  */
-public class DanMuRenderThread extends Thread {
+public class ScrollDanMuThread extends Thread {
     
     public static Queue<DanMu> danMuQueue = new ConcurrentLinkedQueue<>();
     
@@ -31,8 +31,8 @@ public class DanMuRenderThread extends Thread {
                         danMuQueue.remove(danMu);
                     }
                 }
-                PlayerEvents.danMuQueue = danMuQueue;
-                Thread.sleep(25);
+                HudEvents.danMuQueue = danMuQueue;
+                Thread.sleep(35);
             }
         } catch (Exception e) {
             e.printStackTrace();

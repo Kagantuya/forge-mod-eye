@@ -1,4 +1,4 @@
-package com.fudansteam.danmu;
+package com.fudansteam.danmu.config;
 
 import java.util.regex.Matcher;
 
