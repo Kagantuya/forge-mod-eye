@@ -26,6 +26,7 @@ public class Eye {
     public static ConcurrentHashMap<String, Long> tipTimes = new ConcurrentHashMap<>();
     public static boolean shouldWarn = false;
     public static double originGamma = -1;
+    public static boolean entered = false;
     
     /**
      * 弹幕缓存
