@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -30,19 +29,17 @@ public class LoginScreen extends Screen {
     private static final int QR_SIZE = 120;
     private final Screen parent;
     private static String informKey = "eye.inform.qr.tip";
-    public static DynamicTexture texture;
     private static final TranslationTextComponent RESOURCE_PAGE = new TranslationTextComponent("eye.inform.qr.resource_code");
     private static final ITextComponent LOGIN_TOOLTIP = new TranslationTextComponent("eye.widget.tooltip.login");
     private static Style style;
-    public static boolean confirmed = false;
     private static AutoLoginThread thread = null;
     
     public LoginScreen(Screen parent) {
         super(new TranslationTextComponent("eye.title.login"));
         this.parent = parent;
         informKey = "eye.inform.qr.tip";
-        texture = null;
-        confirmed = false;
+        Eye.qrImage = null;
+        Eye.confirmed = false;
         BiliUtil.beforeTryLogin();
         onClose();
         thread = new AutoLoginThread();
@@ -59,9 +56,9 @@ public class LoginScreen extends Screen {
     
     @Override
     public void tick() {
-        if (confirmed) {
+        if (Eye.confirmed) {
             login();
-            confirmed = false;
+            Eye.confirmed = false;
         }
     }
     
@@ -78,11 +75,11 @@ public class LoginScreen extends Screen {
     
     private void login() {
         try {
-            if (Eye.loginCookies.size() != 1) {
-                Eye.username = BiliUtil.getUsername(Eye.loginCookies.get("FinalCookie"));
+            if (Eye.loginCookieMap != null) {
+                Eye.username = BiliUtil.getUsername(Eye.loginCookieMap.get("FinalCookie"));
                 Minecraft.getInstance().displayGuiScreen(this.parent);
             } else {
-                informKey = Eye.loginCookies.get("inform");
+                informKey = Eye.informKey;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,13 +103,13 @@ public class LoginScreen extends Screen {
     public void render(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(matrixStack);
         drawCenteredString(matrixStack, this.font, this.title, this.width / 2, 8, 16777215);
-        if (texture != null) {
+        if (Eye.qrImage != null) {
             Minecraft instance = Minecraft.getInstance();
             TextureManager textureManager = instance.getTextureManager();
             ResourceLocation qrCache = new ResourceLocation(Eye.ID, "qr_cache");
-            textureManager.loadTexture(qrCache, texture);
+            textureManager.loadTexture(qrCache, Eye.qrImage);
             textureManager.bindTexture(qrCache);
-            if (texture.getTextureData() != null) {
+            if (Eye.qrImage.getTextureData() != null) {
                 AbstractGui.blit(matrixStack,
                         (instance.getMainWindow().getScaledWidth() - QR_SIZE) / 2, 28,
                         0, 0, QR_SIZE, QR_SIZE, QR_SIZE, QR_SIZE);

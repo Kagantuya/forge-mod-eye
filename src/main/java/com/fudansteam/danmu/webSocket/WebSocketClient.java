@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class WebSocketClient {
     
-    public static final ScheduledExecutorService SERVICE = Executors.newSingleThreadScheduledExecutor();
+    private static final ScheduledExecutorService SERVICE = Executors.newSingleThreadScheduledExecutor();
     private final Site site;
     private final URI uri;
     private Channel channel;

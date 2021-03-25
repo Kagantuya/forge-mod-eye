@@ -1,7 +1,6 @@
 package com.fudansteam.utils;
 
 import com.fudansteam.Eye;
-import com.fudansteam.screen.LoginScreen;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -26,7 +25,7 @@ public class BiliUtil {
             JsonObject qrData = new JsonParser().parse(qrRes).getAsJsonObject().get("data").getAsJsonObject();
             Eye.oauthKey = qrData.get("oauthKey").getAsString();
             String qrUrl = "https://api88.net/api/code/?text=" + qrData.get("url").getAsString() + "&type=img";
-            LoginScreen.texture = new DynamicTexture(NativeImage.read(HttpUtil.sendPost(qrUrl, null)));
+            Eye.qrImage = new DynamicTexture(NativeImage.read(HttpUtil.sendPost(qrUrl, null)));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -34,7 +33,7 @@ public class BiliUtil {
     
     public static Map<String, String> tryLogin(String oauthKey) throws Exception {
         Map<String, String> loginParams = new HashMap<>(2);
-        Map<String, String> loginCookies = new HashMap<>(1);
+        Map<String, String> loginCookies = null;
         loginParams.put("oauthKey", oauthKey);
         loginParams.put("gourl", "http://www.bilibili.com");
         String loginRes = HttpUtil.sendPostForm("http://passport.bilibili.com/qrcode/getLoginInfo", loginParams, null);
@@ -47,17 +46,17 @@ public class BiliUtil {
         } else {
             switch (loginData.getAsNumber().intValue()) {
                 case -1:
-                    loginCookies.put("inform", "eye.inform.qr.error");
+                    Eye.informKey = "eye.inform.qr.error";
                     break;
                 case -2:
-                    loginCookies.put("inform", "eye.inform.qr.expired");
+                    Eye.informKey = "eye.inform.qr.expired";
                     beforeTryLogin();
                     break;
                 case -4:
-                    loginCookies.put("inform", "eye.inform.qr.not_scanned");
+                    Eye.informKey = "eye.inform.qr.not_scanned";
                     break;
                 case -5:
-                    loginCookies.put("inform", "eye.inform.qr.not_confirm");
+                    Eye.informKey = "eye.inform.qr.not_confirm";
                     break;
                 default:
             }
@@ -79,17 +78,17 @@ public class BiliUtil {
     }
     
     public static void logout() {
-        if (Eye.loginCookies == null) {
+        if (Eye.loginCookieMap == null) {
             return;
         }
         Map<String, String> params = new HashMap<>(2);
         params.put("gourl", "https://account.bilibili.com/account/home");
-        params.put("biliCSRF", Eye.loginCookies.get("bili_jct"));
+        params.put("biliCSRF", Eye.loginCookieMap.get("bili_jct"));
         Map<String, String> headers = new HashMap<>(1);
-        headers.put("cookie", Eye.loginCookies.get("FinalCookie"));
+        headers.put("cookie", Eye.loginCookieMap.get("FinalCookie"));
         try {
             HttpUtil.sendPostForm("http://passport.bilibili.com/login/exit/v2", params, headers);
-            Eye.loginCookies = null;
+            Eye.loginCookieMap = null;
             Eye.oauthKey = null;
             Eye.username = null;
         } catch (Exception e) {

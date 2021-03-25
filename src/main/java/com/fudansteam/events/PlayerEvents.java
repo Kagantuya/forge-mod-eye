@@ -2,9 +2,7 @@ package com.fudansteam.events;
 
 import com.fudansteam.Eye;
 import com.fudansteam.config.EyeConfig;
-import com.fudansteam.danmu.event.SendDanMuEvent;
 import com.fudansteam.danmu.utils.DanMuOperations;
-import com.fudansteam.thread.ScrollDanMuThread;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -16,11 +14,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  */
 public class PlayerEvents {
     
-    
     @SubscribeEvent
     public void onEnterWorld(PlayerEvent.PlayerLoggedInEvent event) {
         Eye.entered = true;
-        if (EyeConfig.danMu) {
+        if (EyeConfig.instance.enableDanMu) {
             DanMuOperations.open();
         }
     }
@@ -28,19 +25,18 @@ public class PlayerEvents {
     @SubscribeEvent
     public void onOutWorld(PlayerEvent.PlayerLoggedOutEvent event) {
         Eye.entered = false;
-        if (HudEvents.scrollDanMuThread != null) {
-            HudEvents.scrollDanMuThread.interrupt();
-            HudEvents.scrollDanMuThread = null;
+        if (Eye.scrollDanMuThread != null) {
+            Eye.scrollDanMuThread.interrupt();
+            Eye.scrollDanMuThread = null;
         }
         DanMuOperations.close();
-        Eye.tips.clear();
-        Eye.tipTimes.clear();
+        Eye.tipMap.clear();
+        Eye.tipTimeMap.clear();
         Eye.shouldWarn = false;
-        HudEvents.preClosestEntityIdMap.clear();
-        
-        HudEvents.danMuQueue.clear();
-        SendDanMuEvent.TEXT_CACHE.clear();
-        ScrollDanMuThread.danMuQueue.clear();
+        Eye.preClosestEntityIdMap.clear();
+    
+        Eye.OriginDanMuQueue.clear();
+        Eye.CanRenderDanMuQueue.clear();
     }
     
 }

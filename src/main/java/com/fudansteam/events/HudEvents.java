@@ -20,10 +20,6 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * @author : 箱子
@@ -34,16 +30,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class HudEvents extends AbstractGui {
     
     private static final int PADDING = 14;
-    public static final int BLACK_BELT_HEIGHT = 23;
     private static final int RGB = Color.BLACK.getRGB();
     private static final int Z_INDEX = -100;
-    public static Thread scrollDanMuThread = null;
-    public static Map<String, Integer> preClosestEntityIdMap = new HashMap<>();
-    public static Queue<DanMu> danMuQueue = new ConcurrentLinkedQueue<>();
+    private static final int BLACK_BELT_HEIGHT = 23;
+    private static final String TERRIBLE = "TERRIBLE";
+    private static final String OTHER = "OTHER";
+    private static final float DISAPPEAR_TIME = 1500.0F;
     
     @SubscribeEvent
     public void onBlackBelt(RenderGameOverlayEvent.Pre e) {
-        if (EyeConfig.blackBelt && e.getType() == RenderGameOverlayEvent.ElementType.ALL) {
+        if (EyeConfig.instance.enableBlackBelt && e.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             MainWindow mainWindow = Minecraft.getInstance().getMainWindow();
             this.setBlitOffset(Z_INDEX);
             fillGradient(e.getMatrixStack(), 0, 0, mainWindow.getScaledWidth(), BLACK_BELT_HEIGHT, RGB, RGB);
@@ -53,7 +49,7 @@ public class HudEvents extends AbstractGui {
     
     @SubscribeEvent
     public void onEyeRender(RenderGameOverlayEvent e) {
-        if (Eye.tips != null && e.getType() == RenderGameOverlayEvent.ElementType.ALL) {
+        if (Eye.tipMap.size() != 0 && e.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             Minecraft client = Minecraft.getInstance();
             FontRenderer textRenderer = client.fontRenderer;
             int x = client.getMainWindow().getScaledWidth() / 2;
@@ -63,39 +59,40 @@ public class HudEvents extends AbstractGui {
             }
             
             String text;
-            if (canRender(EyeConfig.TERRIBLE)) {
-                text = Eye.tips.get(EyeConfig.TERRIBLE);
+            if (canRender(TERRIBLE)) {
+                text = Eye.tipMap.get(TERRIBLE);
                 textRenderer.drawStringWithShadow(
                         e.getMatrixStack(), text,
                         x - (float) textRenderer.getStringWidth(text) / 2,
                         y - (textRenderer.FONT_HEIGHT + PADDING) * 2,
-                        getColor(EyeConfig.TERRIBLE));
+                        getColor(TERRIBLE));
             }
-            if (canRender(EyeConfig.OTHER)) {
-                text = Eye.tips.get(EyeConfig.OTHER);
+            if (canRender(OTHER)) {
+                text = Eye.tipMap.get(OTHER);
                 textRenderer.drawStringWithShadow(
                         e.getMatrixStack(), text,
                         x - (float) textRenderer.getStringWidth(text) / 2,
                         y - (textRenderer.FONT_HEIGHT + PADDING),
-                        getColor(EyeConfig.OTHER));
+                        getColor(OTHER));
             }
         }
     }
     
     @SubscribeEvent
     public void onScrollDanMu(RenderGameOverlayEvent e) {
-        if (e.getType() == RenderGameOverlayEvent.ElementType.ALL && EyeConfig.danMuScroll) {
-            if (scrollDanMuThread == null) {
-                scrollDanMuThread = new ScrollDanMuThread();
-                scrollDanMuThread.start();
-            }
-            FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
-            for (DanMu danMu : danMuQueue) {
-                int y = (danMu.getLayer() - 1) * (fontRenderer.FONT_HEIGHT + EyeConfig.danMuRowSpacing) + EyeConfig.danMuRowSpacing;
-                if (EyeConfig.blackBelt) {
-                    y += HudEvents.BLACK_BELT_HEIGHT;
+        if (e.getType() == RenderGameOverlayEvent.ElementType.ALL && EyeConfig.instance.enableDanMuScroll) {
+            if (Eye.scrollDanMuThread == null) {
+                Eye.scrollDanMuThread = new ScrollDanMuThread();
+                Eye.scrollDanMuThread.start();
+            } else {
+                FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
+                for (DanMu danMu : Eye.CanRenderDanMuQueue) {
+                    int y = (danMu.getLayer() - 1) * (fontRenderer.FONT_HEIGHT + EyeConfig.instance.danMuRowSpacing) + EyeConfig.instance.danMuRowSpacing;
+                    if (EyeConfig.instance.enableBlackBelt) {
+                        y += BLACK_BELT_HEIGHT;
+                    }
+                    fontRenderer.drawStringWithShadow(e.getMatrixStack(), danMu.getText(), danMu.getX(), y, Color.WHITE.getRGB());
                 }
-                fontRenderer.drawStringWithShadow(e.getMatrixStack(), danMu.getText(), danMu.getX(), y, Color.WHITE.getRGB());
             }
         }
     }
@@ -109,7 +106,7 @@ public class HudEvents extends AbstractGui {
                 return;
             }
             // 实体不为当前玩家同时二者距离在指定半径内
-            if (entity.getEntityId() != player.getEntityId() && entity.isEntityInRange(player, EyeConfig.distance)) {
+            if (entity.getEntityId() != player.getEntityId() && entity.isEntityInRange(player, EyeConfig.instance.distance)) {
                 insideEye(entity, player);
             } else {
                 outsideEye();
@@ -122,10 +119,10 @@ public class HudEvents extends AbstractGui {
      */
     private void outsideEye() {
         // 当前未检测到实体则判断是否可移除过期提示
-        for (String tipType : Eye.tipTimes.keySet()) {
-            if (System.currentTimeMillis() - Eye.tipTimes.get(tipType) >= EyeConfig.DISAPPEAR_TIME) {
-                Eye.tips.remove(tipType);
-                Eye.tipTimes.remove(tipType);
+        for (String tipType : Eye.tipTimeMap.keySet()) {
+            if (System.currentTimeMillis() - Eye.tipTimeMap.get(tipType) >= DISAPPEAR_TIME) {
+                Eye.tipMap.remove(tipType);
+                Eye.tipTimeMap.remove(tipType);
             }
         }
     }
@@ -138,9 +135,9 @@ public class HudEvents extends AbstractGui {
      */
     private void insideEye(Entity entity, ClientPlayerEntity player) {
         if (entity instanceof MonsterEntity || entity instanceof AmbientEntity || entity instanceof SlimeEntity) {
-            shouldUpdate(EyeConfig.TERRIBLE, entity, player);
+            shouldUpdate(TERRIBLE, entity, player);
         } else {
-            shouldUpdate(EyeConfig.OTHER, entity, player);
+            shouldUpdate(OTHER, entity, player);
         }
     }
     
@@ -154,18 +151,18 @@ public class HudEvents extends AbstractGui {
     private void shouldUpdate(String tipType, Entity entity, ClientPlayerEntity player) {
         int entityId = entity.getEntityId();
         // 提示实体信息同时跟踪此实体，若之前未标记过实体或标记实体消失了，或接下来有新的实体更靠近玩家或仍为此实体则再次更新实体
-        Integer preClosestEntityId = preClosestEntityIdMap.get(tipType);
+        Integer preClosestEntityId = Eye.preClosestEntityIdMap.get(tipType);
         Entity preClosestEntity = null;
         if (Minecraft.getInstance().world != null && preClosestEntityId != null) {
             preClosestEntity = Minecraft.getInstance().world.getEntityByID(preClosestEntityId);
         }
         if (preClosestEntityId == null || preClosestEntity == null ||
                 entity.getDistance(player) < preClosestEntity.getDistance(player) || entityId == preClosestEntityId) {
-            Eye.tips.put(tipType, getTip(player, entity));
-            preClosestEntityIdMap.put(tipType, entityId);
+            Eye.tipMap.put(tipType, getTip(player, entity));
+            Eye.preClosestEntityIdMap.put(tipType, entityId);
             updateTipTimes(tipType);
-            if (tipType.equals(EyeConfig.TERRIBLE)) {
-                Eye.shouldWarn = entity.getDistance(player) <= EyeConfig.warnDistance;
+            if (tipType.equals(TERRIBLE)) {
+                Eye.shouldWarn = entity.getDistance(player) <= EyeConfig.instance.warnDistance;
             }
         }
     }
@@ -176,9 +173,9 @@ public class HudEvents extends AbstractGui {
      * @param tipType 提示种类
      */
     private void updateTipTimes(String tipType) {
-        Long preTime = Eye.tipTimes.get(tipType);
-        if (preTime == null || System.currentTimeMillis() - preTime < EyeConfig.DISAPPEAR_TIME) {
-            Eye.tipTimes.put(tipType, System.currentTimeMillis());
+        Long preTime = Eye.tipTimeMap.get(tipType);
+        if (preTime == null || System.currentTimeMillis() - preTime < DISAPPEAR_TIME) {
+            Eye.tipTimeMap.put(tipType, System.currentTimeMillis());
         }
     }
     
@@ -222,10 +219,10 @@ public class HudEvents extends AbstractGui {
      * @return 颜色值
      */
     private int getColor(String tipType) {
-        float delta = System.currentTimeMillis() - Eye.tipTimes.get(tipType);
+        float delta = System.currentTimeMillis() - Eye.tipTimeMap.get(tipType);
         // 渐变淡出
-        int p = MathHelper.floor(MathHelper.clampedLerp(25.0D, 255.0D, (EyeConfig.DISAPPEAR_TIME - delta) / EyeConfig.DISAPPEAR_TIME));
-        return Eye.shouldWarn && tipType.equals(EyeConfig.TERRIBLE) ?
+        int p = MathHelper.floor(MathHelper.clampedLerp(25.0D, 255.0D, (DISAPPEAR_TIME - delta) / DISAPPEAR_TIME));
+        return Eye.shouldWarn && tipType.equals(TERRIBLE) ?
                 new Color(255, 0, 0, p).getRGB() :
                 new Color(255, 255, 255, p).getRGB();
     }
@@ -237,7 +234,7 @@ public class HudEvents extends AbstractGui {
      * @return 是否可渲染
      */
     private boolean canRender(String tipType) {
-        return Eye.tips.get(tipType) != null && Eye.tipTimes.get(tipType) != null;
+        return Eye.tipMap.get(tipType) != null && Eye.tipTimeMap.get(tipType) != null;
     }
     
 }

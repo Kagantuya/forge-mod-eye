@@ -32,26 +32,26 @@ public class EyeOptions {
     
     public static final SliderPercentageOption EYE_DISTANCE = new SliderPercentageOption("eye.options.distance",
             1.0D, 50.0D, 1.0F,
-            gameOptions -> (double) EyeConfig.distance,
+            gameOptions -> (double) EyeConfig.instance.distance,
             (gameOptions, value) -> {
-                EyeConfig.distance = value.intValue();
+                EyeConfig.instance.distance = value.intValue();
                 EyeDistributor.save();
             },
-            (gameOptions, option) -> new TranslationTextComponent("eye.options.distance_s", EyeConfig.distance));
+            (gameOptions, option) -> new TranslationTextComponent("eye.options.distance_s", EyeConfig.instance.distance));
     
     public static final SliderPercentageOption WARN_DISTANCE = new SliderPercentageOption("eye.options.warn_distance",
             1.0D, 50.0D, 1.0F,
-            gameOptions -> (double) EyeConfig.warnDistance,
+            gameOptions -> (double) EyeConfig.instance.warnDistance,
             (gameOptions, value) -> {
-                EyeConfig.warnDistance = value.intValue();
+                EyeConfig.instance.warnDistance = value.intValue();
                 EyeDistributor.save();
             },
-            (gameOptions, option) -> new TranslationTextComponent("eye.options.warn_distance_s", EyeConfig.warnDistance));
+            (gameOptions, option) -> new TranslationTextComponent("eye.options.warn_distance_s", EyeConfig.instance.warnDistance));
     
     public static final IteratableOption SUPER_EYE = new IteratableOption("eye.options.super_eye",
             (gameOptions, integer) -> {
-                EyeConfig.superEye = !EyeConfig.superEye;
-                if (EyeConfig.superEye) {
+                EyeConfig.instance.enableSuperEye = !EyeConfig.instance.enableSuperEye;
+                if (EyeConfig.instance.enableSuperEye) {
                     Eye.originGamma = gameOptions.gamma;
                     gameOptions.gamma = 100;
                 } else if (Eye.originGamma != -1) {
@@ -61,17 +61,17 @@ public class EyeOptions {
             },
             (gameOptions, cyclingOption) -> {
                 cyclingOption.setOptionValues(TEXT_RENDERER.trimStringToWidth(new TranslationTextComponent("eye.options.tooltip.super_eye"), 200));
-                return EyeConfig.superEye ? SUPER_EYE_OPEN : SUPER_EYE_OFF;
+                return EyeConfig.instance.enableSuperEye ? SUPER_EYE_OPEN : SUPER_EYE_OFF;
             });
     
     public static final IteratableOption BLACK_BELT = new IteratableOption("eye.options.black_belt",
             (gameOptions, integer) -> {
-                EyeConfig.blackBelt = !EyeConfig.blackBelt;
+                EyeConfig.instance.enableBlackBelt = !EyeConfig.instance.enableBlackBelt;
                 EyeDistributor.save();
             },
             (gameOptions, cyclingOption) -> {
                 cyclingOption.setOptionValues(TEXT_RENDERER.trimStringToWidth(new TranslationTextComponent("eye.options.tooltip.black_belt"), 200));
-                return EyeConfig.blackBelt ? BLACK_BELT_OPEN : BLACK_BELT_OFF;
+                return EyeConfig.instance.enableBlackBelt ? BLACK_BELT_OPEN : BLACK_BELT_OFF;
             });
     
     public static final IteratableOption DAN_MU = new IteratableOption("eye.options.dan_mu",
@@ -83,9 +83,9 @@ public class EyeOptions {
     
     public static final IteratableOption DAN_MU_OPTION = new IteratableOption("eye.options.dan_mu_option",
             (gameOptions, integer) -> {
-                EyeConfig.danMu = !EyeConfig.danMu;
+                EyeConfig.instance.enableDanMu = !EyeConfig.instance.enableDanMu;
                 if (Minecraft.getInstance().player != null) {
-                    if (EyeConfig.danMu) {
+                    if (EyeConfig.instance.enableDanMu) {
                         DanMuOperations.open();
                     } else {
                         DanMuOperations.close();
@@ -95,13 +95,13 @@ public class EyeOptions {
             },
             (gameOptions, cyclingOption) -> {
                 cyclingOption.setOptionValues(Minecraft.getInstance().fontRenderer.trimStringToWidth(new TranslationTextComponent("eye.options.tooltip.dan_mu_option"), 200));
-                return EyeConfig.danMu ? DAN_MU_OPEN : DAN_MU_OFF;
+                return EyeConfig.instance.enableDanMu ? DAN_MU_OPEN : DAN_MU_OFF;
             });
     
     public static final IteratableOption BILI_OPTION = new IteratableOption("eye.options.bili_option.login",
             (gameSettings, integer) -> {
                 Minecraft instance = Minecraft.getInstance();
-                if (Eye.loginCookies == null) {
+                if (Eye.loginCookieMap == null) {
                     instance.displayGuiScreen(new LoginScreen(Minecraft.getInstance().currentScreen));
                 } else {
                     instance.displayGuiScreen(new ConfirmScreen(
@@ -109,7 +109,7 @@ public class EyeOptions {
                                 if (flag) {
                                     BiliUtil.logout();
                                 }
-                                instance.displayGuiScreen(DanMuScreen.instance);
+                                instance.displayGuiScreen(DanMuScreen.getInstance());
                             },
                             new TranslationTextComponent("eye.title.logout"), new TranslationTextComponent("eye.title.logout.sub")
                     ));
@@ -117,7 +117,7 @@ public class EyeOptions {
             },
             (gameOptions, cyclingOption) -> {
                 cyclingOption.setOptionValues(Minecraft.getInstance().fontRenderer.trimStringToWidth(new TranslationTextComponent("eye.options.tooltip.bili_option"), 200));
-                return Eye.loginCookies == null ?
+                return Eye.loginCookieMap == null ?
                         new TranslationTextComponent("eye.options.bili_option.login") :
                         new TranslationTextComponent("eye.options.bili_option.logged", Eye.username);
             });
@@ -132,33 +132,33 @@ public class EyeOptions {
     
     public static final SliderPercentageOption DAN_MU_LAYER = new SliderPercentageOption("eye.options.dan_mu_layer",
             1.0D, 10.0D, 1.0F,
-            gameOptions -> (double) EyeConfig.danMuLayer,
+            gameOptions -> (double) EyeConfig.instance.danMuLayer,
             (gameOptions, value) -> {
-                EyeConfig.danMuLayer = value.intValue();
+                EyeConfig.instance.danMuLayer = value.intValue();
                 EyeDistributor.save();
             },
-            (gameOptions, option) -> new TranslationTextComponent("eye.options.dan_mu_layer_l", EyeConfig.danMuLayer));
+            (gameOptions, option) -> new TranslationTextComponent("eye.options.dan_mu_layer_l", EyeConfig.instance.danMuLayer));
     
     private static final TranslationTextComponent DAN_MU_SCROLL_OPEN = new TranslationTextComponent("eye.options.dan_mu_scroll.open");
     private static final TranslationTextComponent DAN_MU_SCROLL_OFF = new TranslationTextComponent("eye.options.dan_mu_scroll.off");
     
     public static final IteratableOption DAN_MU_SCROLL = new IteratableOption("eye.options.dan_mu_scroll",
             (gameOptions, integer) -> {
-                EyeConfig.danMuScroll = !EyeConfig.danMuScroll;
+                EyeConfig.instance.enableDanMuScroll = !EyeConfig.instance.enableDanMuScroll;
                 EyeDistributor.save();
             },
             (gameOptions, cyclingOption) -> {
                 cyclingOption.setOptionValues(Minecraft.getInstance().fontRenderer.trimStringToWidth(new TranslationTextComponent("eye.options.tooltip.dan_mu_scroll"), 200));
-                return EyeConfig.danMuScroll ? DAN_MU_SCROLL_OPEN : DAN_MU_SCROLL_OFF;
+                return EyeConfig.instance.enableDanMuScroll ? DAN_MU_SCROLL_OPEN : DAN_MU_SCROLL_OFF;
             });
     
     public static final SliderPercentageOption DAN_MU_ROW_SPACING = new SliderPercentageOption("eye.options.dan_mu_row_spacing",
             1.0D, 5.0D, 1.0F,
-            gameOptions -> (double) EyeConfig.danMuRowSpacing,
+            gameOptions -> (double) EyeConfig.instance.danMuRowSpacing,
             (gameOptions, value) -> {
-                EyeConfig.danMuRowSpacing = value.intValue();
+                EyeConfig.instance.danMuRowSpacing = value.intValue();
                 EyeDistributor.save();
             },
-            (gameOptions, option) -> new TranslationTextComponent("eye.options.dan_mu_row_spacing_s", EyeConfig.danMuRowSpacing));
+            (gameOptions, option) -> new TranslationTextComponent("eye.options.dan_mu_row_spacing_s", EyeConfig.instance.danMuRowSpacing));
     
 }
