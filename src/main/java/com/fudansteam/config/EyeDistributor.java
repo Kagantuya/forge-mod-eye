@@ -1,8 +1,13 @@
 package com.fudansteam.config;
 
 import com.fudansteam.Eye;
+import com.google.gson.Gson;
+import net.minecraft.client.Minecraft;
+import org.apache.commons.io.FileUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author : 箱子
@@ -12,79 +17,31 @@ import java.io.*;
  */
 public class EyeDistributor {
     
-    private static File configFile;
-    
-    static {
-        File[] files = new File(System.getProperty("user.dir")).listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory() && "mods".equals(file.getName())) {
-                    configFile = new File(file.getAbsolutePath() + File.separator + "Eye.txt");
-                    break;
-                }
-            }
-        }
-    }
+    private static final File CONFIG_FILE = Minecraft.getInstance().gameDir.toPath().resolve("config").resolve(Eye.ID + ".json").toFile();
+    private static final Gson GSON = new Gson();
     
     public static void save() {
         try {
-            if (!configFile.exists()) {
-                configFile.createNewFile();
+            if (!CONFIG_FILE.exists()) {
+                CONFIG_FILE.createNewFile();
             }
-            String data = getConfig();
-            FileWriter fileWriter = new FileWriter(configFile, false);
-            fileWriter.write(data);
-            fileWriter.close();
+            FileUtils.write(CONFIG_FILE, GSON.toJson(EyeConfig.instance), StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
     public static void load() {
-        if (configFile.exists()) {
+        if (CONFIG_FILE.exists()) {
             try {
-                FileReader fileReader = new FileReader(configFile);
-                StringBuilder config = new StringBuilder();
-                int ch;
-                while ((ch = fileReader.read()) != -1) {
-                    config.append((char) ch);
-                }
-                fileReader.close();
-                if (config.toString().length() == 0) {
-                    return;
-                }
-                setConfig(config.toString());
+                String config = FileUtils.readFileToString(CONFIG_FILE, StandardCharsets.UTF_8);
+                EyeConfig.instance = GSON.fromJson(config, EyeConfig.class);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            EyeConfig.instance = new EyeConfig();
         }
-    }
-    
-    private static void setConfig(String config) {
-        String[] splits = config.split("\n");
-        EyeConfig.distance = Integer.parseInt(splits[0].split("=")[1]);
-        EyeConfig.warnDistance = Integer.parseInt(splits[1].split("=")[1]);
-        EyeConfig.superEye = Boolean.parseBoolean(splits[2].split("=")[1]);
-        Eye.originGamma = Double.parseDouble(splits[3].split("=")[1]);
-        EyeConfig.blackBelt = Boolean.parseBoolean(splits[4].split("=")[1]);
-        EyeConfig.danMu = Boolean.parseBoolean(splits[5].split("=")[1]);
-        EyeConfig.roomId = splits[6].split("=")[1];
-        EyeConfig.danMuLayer = Integer.parseInt(splits[7].split("=")[1]);
-        EyeConfig.danMuScroll = Boolean.parseBoolean(splits[8].split("=")[1]);
-        EyeConfig.danMuRowSpacing = Integer.parseInt(splits[9].split("=")[1]);
-    }
-    
-    private static String getConfig() {
-        return "distance=" + EyeConfig.distance + "\n" +
-                "warnDistance=" + EyeConfig.warnDistance + "\n" +
-                "superEye=" + EyeConfig.superEye + "\n" +
-                "originGamma=" + Eye.originGamma + "\n" +
-                "blackBelt=" + EyeConfig.blackBelt + "\n" +
-                "danMu=" + EyeConfig.danMu + "\n" +
-                "roomId=" + EyeConfig.roomId + "\n" +
-                "danMuLayer=" + EyeConfig.danMuLayer + "\n" +
-                "danMuScroll=" + EyeConfig.danMuScroll + "\n" +
-                "danMuRowSpacing=" + EyeConfig.danMuRowSpacing + "\n";
     }
     
 }

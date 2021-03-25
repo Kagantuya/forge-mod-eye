@@ -30,6 +30,8 @@ public class DanMuOperations {
         } finally {
             Eye.webSocketClient = null;
         }
+        Eye.OriginDanMuQueue.clear();
+        Eye.CanRenderDanMuQueue.clear();
     }
     
 }

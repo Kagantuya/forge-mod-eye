@@ -8,18 +8,28 @@ package com.fudansteam.config;
  */
 public class EyeConfig {
     
-    public static final String TERRIBLE = "TERRIBLE";
-    public static final String OTHER = "OTHER";
-    public static final float DISAPPEAR_TIME = 1500.0F;
+    public static EyeConfig instance = null;
     
-    public static int distance = 15;
-    public static boolean superEye = false;
-    public static int warnDistance = 5;
-    public static boolean blackBelt = false;
-    public static String roomId = "";
-    public static boolean danMu = false;
-    public static int danMuLayer = 10;
-    public static boolean danMuScroll = false;
-    public static int danMuRowSpacing = 3;
+    public int distance;
+    public boolean enableSuperEye;
+    public int warnDistance;
+    public boolean enableBlackBelt;
+    public String roomId;
+    public boolean enableDanMu;
+    public int danMuLayer;
+    public boolean enableDanMuScroll;
+    public int danMuRowSpacing;
+    
+    public EyeConfig() {
+        distance = 15;
+        enableSuperEye = false;
+        warnDistance = 5;
+        enableBlackBelt = false;
+        roomId = "";
+        enableDanMu = false;
+        danMuLayer = 10;
+        enableDanMuScroll = false;
+        danMuRowSpacing = 3;
+    }
     
 }

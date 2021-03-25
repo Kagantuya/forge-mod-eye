@@ -2,7 +2,7 @@ package com.fudansteam.danmu.site;
 
 import com.fudansteam.config.EyeConfig;
 import com.fudansteam.danmu.config.Config;
-import com.fudansteam.danmu.event.SendDanMuEvent;
+import com.fudansteam.danmu.event.GetDanMuEvent;
 import com.fudansteam.danmu.utils.MessageCompiler;
 import com.fudansteam.danmu.utils.Zlib;
 import com.fudansteam.danmu.webSocket.WebSocketClient;
@@ -47,11 +47,11 @@ public class Site {
     }
     
     public void initMessage(WebSocketClient client) {
-        int id = RoomId.getRealRoomId(EyeConfig.roomId);
+        int id = RoomId.getRealRoomId(EyeConfig.instance.roomId);
         if (id == -1) {
-            MinecraftForge.EVENT_BUS.post(new SendDanMuEvent(new TranslationTextComponent("eye.inform.link_live_room.fail", EyeConfig.roomId).getString()));
+            MinecraftForge.EVENT_BUS.post(new GetDanMuEvent(new TranslationTextComponent("eye.inform.link_live_room.fail", EyeConfig.instance.roomId).getString()));
         } else {
-            MinecraftForge.EVENT_BUS.post(new SendDanMuEvent(new TranslationTextComponent("eye.inform.link_live_room.suc", EyeConfig.roomId).getString()));
+            MinecraftForge.EVENT_BUS.post(new GetDanMuEvent(new TranslationTextComponent("eye.inform.link_live_room.suc", EyeConfig.instance.roomId).getString()));
         }
         byte[] message = String.format("{\"roomid\": %d}", id).getBytes(StandardCharsets.UTF_8);
         ByteBuf buf = Unpooled.buffer();
@@ -114,7 +114,7 @@ public class Site {
         try {
             String str = gson.fromJson(message, String.class);
             if (str != null) {
-                MinecraftForge.EVENT_BUS.post(new SendDanMuEvent(str));
+                MinecraftForge.EVENT_BUS.post(new GetDanMuEvent(str));
             }
         } catch (JsonSyntaxException ignore) {
         }

@@ -30,12 +30,16 @@ public class DanMuScreen extends Screen {
     private OptionsRowList list;
     private TextFieldWidget roomId;
     private String tmpRoomId;
-    public static DanMuScreen instance;
+    private static DanMuScreen instance;
     
     public DanMuScreen(Screen parent) {
         super(new TranslationTextComponent("eye.title.dan_mu"));
         this.parent = parent;
         instance = this;
+    }
+    
+    public static DanMuScreen getInstance() {
+        return instance;
     }
     
     @Override
@@ -59,7 +63,7 @@ public class DanMuScreen extends Screen {
         }
         this.roomId = new TextFieldWidget(this.font, this.width / 2 - 100, 42, 200, 20, this.roomId, new TranslationTextComponent("eye.widget.room_id"));
         this.roomId.setResponder((value) -> this.tmpRoomId = value);
-        this.roomId.setText(EyeConfig.roomId);
+        this.roomId.setText(EyeConfig.instance.roomId);
         this.children.add(this.roomId);
         this.list.addOptions(new AbstractOption[]{EyeOptions.DAN_MU_OPTION, EyeOptions.DAN_MU_SCROLL, EyeOptions.DAN_MU_LAYER, EyeOptions.DAN_MU_ROW_SPACING, EyeOptions.BILI_OPTION, EyeOptions.DAN_MU_USAGE});
         this.children.add(this.list);
@@ -67,8 +71,8 @@ public class DanMuScreen extends Screen {
             if (this.minecraft != null) {
                 this.minecraft.displayGuiScreen(this.parent);
             }
-            if (!this.tmpRoomId.equals(EyeConfig.roomId)) {
-                EyeConfig.roomId = this.tmpRoomId;
+            if (!this.tmpRoomId.equals(EyeConfig.instance.roomId)) {
+                EyeConfig.instance.roomId = this.tmpRoomId;
                 EyeDistributor.save();
                 if (this.minecraft != null && this.minecraft.player != null) {
                     DanMuOperations.close();

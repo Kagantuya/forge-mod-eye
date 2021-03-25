@@ -1,7 +1,6 @@
 package com.fudansteam.thread;
 
 import com.fudansteam.Eye;
-import com.fudansteam.screen.LoginScreen;
 import com.fudansteam.utils.BiliUtil;
 
 import java.util.Map;
@@ -19,9 +18,9 @@ public class AutoLoginThread extends Thread {
         try {
             while (true) {
                 Map<String, String> map = BiliUtil.tryLogin(Eye.oauthKey);
-                if (map.size() != 1) {
-                    Eye.loginCookies = map;
-                    LoginScreen.confirmed = true;
+                if (map != null) {
+                    Eye.loginCookieMap = map;
+                    Eye.confirmed = true;
                     break;
                 }
                 Thread.sleep(1000);

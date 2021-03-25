@@ -23,12 +23,12 @@ import java.util.Map;
 public class CommandEvents {
     
     @SubscribeEvent
-    public static void onServerStaring(RegisterCommandsEvent event) {
+    public static void onSendDanMu(RegisterCommandsEvent event) {
         event.getDispatcher().register(Commands.literal(Eye.ID).requires((context) -> context.hasPermissionLevel(0))
                 .then(Commands.literal("sendBiliLive")
                         .then(Commands.argument("message", StringArgumentType.greedyString())
                                 .executes((context) -> {
-                                    if (Eye.loginCookies == null) {
+                                    if (Eye.loginCookieMap == null) {
                                         context.getSource().sendFeedback(new TranslationTextComponent("eye.command.inform.login"), false);
                                         return 0;
                                     } else {
@@ -39,12 +39,12 @@ public class CommandEvents {
                                         params.put("mode", "1");
                                         params.put("msg", message);
                                         params.put("rnd", String.valueOf(System.currentTimeMillis()));
-                                        params.put("roomid", EyeConfig.roomId);
+                                        params.put("roomid", EyeConfig.instance.roomId);
                                         params.put("bubble", "0");
-                                        params.put("csrf_token", Eye.loginCookies.get("SESSDATA"));
-                                        params.put("csrf", Eye.loginCookies.get("bili_jct"));
+                                        params.put("csrf_token", Eye.loginCookieMap.get("SESSDATA"));
+                                        params.put("csrf", Eye.loginCookieMap.get("bili_jct"));
                                         Map<String, String> headers = new HashMap<>(4);
-                                        headers.put("cookie", Eye.loginCookies.get("FinalCookie"));
+                                        headers.put("cookie", Eye.loginCookieMap.get("FinalCookie"));
                                         headers.put("origin", "https://live.bilibili.com");
                                         headers.put("referer", "https://live.bilibili.com/blanc/1029?liteVersion=true");
                                         headers.put("user-agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
